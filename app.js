@@ -8,9 +8,12 @@ const ExpressError = require('./utils/ExpressError');
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
-const User = require('./models/user');
-const { isLoggedIn } = require('./middleware')
+const multer = require('multer');
+const uuid = require('uuid').v4;
+const fs = require('fs');
 
+const User = require('./models/user');
+const { isLoggedIn, processFile } = require('./middleware')
 const userRoutes = require('./routes/users');
 
 mongoose.connect('mongodb://localhost:27017/secureVault', {
@@ -25,6 +28,28 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
     console.log("Database connected");
 });
+
+const storage = multer.diskStorage({
+    destination: (req, res, cb) => {
+        try {
+            const userId = req.session.user._id;
+            const dir = `uploads/${userId}`;
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir);
+            }
+            cb(null, dir);
+        }
+        catch (e) {
+            console.log(e);
+        }    
+    },
+    filename: (req, file, cb) => {
+        const { originalname } = file;
+        cb(null, originalname);
+    }
+})
+
+const upload = multer({ storage });
 
 const app = express();
 
@@ -67,6 +92,10 @@ app.use('/', userRoutes);
 
 app.get('/', isLoggedIn, (req, res) => {
     res.render('vault/myVault');
+})
+
+app.post('/upload', isLoggedIn, upload.single('file'), processFile, (req, res) => {
+    return res.redirect('/');
 })
 
 app.all('*', (req, res, next) => {

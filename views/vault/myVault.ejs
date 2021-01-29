@@ -1,6 +1,37 @@
 <% layout('layouts/boilerplate')%>
 
 <div>
-    <h1>Welcome to SecureVault</h1>
+    <div class="d-flex justify-content-end">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-lg btn-outline-info" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+           <span><i class="fas fa-upload" style="margin-right: 1rem;"></i></span>Upload File
+        </button>
+    </div>
+    <!-- Modal -->
+    <div class="modal top fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        data-mdb-backdrop="true" data-mdb-keyboard="true">
+        <div class="modal-dialog   modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Upload File</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/upload" method="POST" enctype="multipart/form-data">
+                        <div style="width: 60%;">
+                            <label for="formFileLg" class="form-label">Select File</label>
+                            <input class="form-control form-control-lg" id="formFileLg" name="file" type="file" />
+                        </div>
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="button" class="btn btn-outline-danger" style="margin-right: 0.5rem;" data-mdb-dismiss="modal">
+                                Cancel
+                            </button>
+                            <input type="submit" class="btn btn-outline-success" value="Upload">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     
 </div>
